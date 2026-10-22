@@ -110,7 +110,7 @@ class Config:
     DEFAULT_VERBOSE = False
 
     """默认域名"""
-    DOMAINS = ["glados.cloud", "railgun.info"]
+    DOMAINS = ["glados-facility.com"]
 
     """兑换计划列表"""
     EXCHANGE_PLANS = {
@@ -707,6 +707,7 @@ def main():
         if not config.cookies_list:
             logger.error(f"{LogEmoji.ERROR} 未找到有效的 Cookie, 退出程序。")
             payload = {"title": "# 未找到 cookies!", "rows": []}
+            exit_code = 1
         else:
             logger.info(f"{LogEmoji.START} 步骤 2: 执行签到")
             checker = Checker(config)
@@ -715,6 +716,8 @@ def main():
             logger.info(f"{LogEmoji.START} 步骤 3: 格式化结果")
             payload = checker.format_results()
             logger.info(f"\n{LogEmoji.END} ========== 签到总结 ==========\n{payload['title']}\n{render_payload(payload)}")
+            if payload["fail"] > 0:
+                exit_code = 1
 
     except Exception as e:
         logger.error(f"{LogEmoji.ERROR} 主程序执行过程中发生未预期的错误: {e}")
